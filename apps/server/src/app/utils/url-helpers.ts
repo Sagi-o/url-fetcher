@@ -1,6 +1,6 @@
 export const normalizeUrl = (url: string): string => {
-  // Trim whitespace
-  let normalized = url.trim();
+  // Trim whitespace and convert to lowercase
+  let normalized = url.trim().toLowerCase();
 
   // If no protocol, add https://
   if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {

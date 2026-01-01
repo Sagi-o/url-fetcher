@@ -1,14 +1,28 @@
-import { UrlRecordBase, UrlRecord, UrlServiceEvents } from '@org/shared';
+import {
+  UrlRecordBase,
+  UrlRecord,
+  UrlServiceEvents,
+  UrlSortField,
+  SortOrder,
+} from '@org/shared';
 import { urlTable } from '../../utils/db';
 import { EventEmitter } from 'events';
 import { normalizeUrls } from '../../utils/url-helpers';
+import { sortBy as sortArray } from '../../utils/sort';
+import { uniq } from 'lodash';
 
 export class UrlService extends EventEmitter {
   constructor() {
     super();
   }
-  getUrlList(): UrlRecord[] {
-    return Array.from(urlTable.values());
+  getUrlList(sortBy?: UrlSortField, order: SortOrder = 'desc'): UrlRecord[] {
+    const urls = Array.from(urlTable.values());
+
+    if (!sortBy) {
+      return urls;
+    }
+
+    return sortArray<UrlRecord, UrlSortField>(urls, { field: sortBy, order });
   }
 
   getUrlContent(url: string): string {
@@ -23,21 +37,39 @@ export class UrlService extends EventEmitter {
   }
 
   async fetchUrls(urls: string[]): Promise<UrlRecordBase[]> {
-    const normalizedUrls = normalizeUrls(urls);
+    const uniqueUrls = uniq(normalizeUrls(urls));
     const results: UrlRecordBase[] = [];
 
-    for (const url of normalizedUrls) {
+    // Set all URLs to loading state first
+    for (const url of uniqueUrls) {
       const existingRecord = urlTable.get(url);
       const createdAt = existingRecord?.createdAt ?? Date.now();
       const updatedAt = Date.now();
 
       // Add to table with loading status
-      urlTable.set(url, { url, status: 'loading', createdAt, updatedAt });
-      results.push({ url, status: 'loading', createdAt, updatedAt });
+      const loadingRecord = {
+        url,
+        status: 'loading' as const,
+        createdAt,
+        updatedAt,
+      };
+      urlTable.set(url, loadingRecord);
+      results.push(loadingRecord);
 
-      // Fetch in background
-      this.fetchUrlContent(url, createdAt);
+      // Emit loading state via SSE
+      this.emit(UrlServiceEvents.URL_UPDATED, loadingRecord);
     }
+
+    // Fetch all URLs in parallel using Promise.all
+    // This is more efficient than sequential fetching (for loop)
+    // Fire and forget - errors are handled in fetchUrlContent
+    Promise.all(
+      uniqueUrls.map((url) => {
+        const record = urlTable.get(url);
+        const createdAt = record?.createdAt ?? Date.now();
+        return this.fetchUrlContent(url, createdAt);
+      })
+    );
 
     return results;
   }
@@ -69,7 +101,8 @@ export class UrlService extends EventEmitter {
     } catch (error) {
       const fetchTime = Date.now() - startTime;
       const updatedAt = Date.now();
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
 
       const record = {
         url,

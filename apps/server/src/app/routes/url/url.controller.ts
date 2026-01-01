@@ -3,12 +3,13 @@ import { urlService } from './url.service';
 import { validateDTO } from '../../utils/dto-validation';
 import { FetchUrlsDTO } from './url.dto';
 import { BadRequestError } from '../../utils/http-errors';
-import { HttpResponse, UrlServiceEvents } from '@org/shared';
+import { HttpResponse, UrlServiceEvents, UrlListQueryParams } from '@org/shared';
 import { createSSEConnection } from '../../utils/sse';
 
 export const urlController = (app: FastifyInstance) => {
-  app.get('/list', async (_req, reply) => {
-    const data = urlService.getUrlList();
+  app.get<{ Querystring: UrlListQueryParams }>('/list', async (req, reply) => {
+    const { sortBy, order } = req.query;
+    const data = urlService.getUrlList(sortBy, order);
     const response: HttpResponse<typeof data> = {
       success: true,
       data,

@@ -95,4 +95,77 @@ describe('UrlCard', () => {
 
     expect(mockOnClick).toHaveBeenCalled();
   });
+
+  it('should show refetch button when onRefetch prop is provided', () => {
+    const mockOnRefetch = vi.fn();
+    const urlRecord: UrlRecord = {
+      url: 'http://example.com',
+      status: 'success',
+      content: '<html></html>',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      fetchTime: 342,
+    };
+
+    const { getByTestId } = renderWithMantine(
+      <UrlCard urlRecord={urlRecord} onClick={() => {}} onRefetch={mockOnRefetch} />
+    );
+
+    const refetchButton = getByTestId('refetch-button');
+    expect(refetchButton).toBeDefined();
+  });
+
+  it('should not show refetch button when onRefetch is not provided', () => {
+    const urlRecord: UrlRecord = {
+      url: 'http://example.com',
+      status: 'success',
+      content: '<html></html>',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      fetchTime: 342,
+    };
+
+    const { queryByTestId } = renderWithMantine(<UrlCard urlRecord={urlRecord} onClick={() => {}} />);
+
+    expect(queryByTestId('refetch-button')).toBeNull();
+  });
+
+  it('should not show refetch button when status is loading', () => {
+    const mockOnRefetch = vi.fn();
+    const urlRecord: UrlRecord = {
+      url: 'http://example.com',
+      status: 'loading',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    const { queryByTestId } = renderWithMantine(
+      <UrlCard urlRecord={urlRecord} onClick={() => {}} onRefetch={mockOnRefetch} />
+    );
+
+    expect(queryByTestId('refetch-button')).toBeNull();
+  });
+
+  it('should call onRefetch when refetch button is clicked', () => {
+    const mockOnClick = vi.fn();
+    const mockOnRefetch = vi.fn();
+    const urlRecord: UrlRecord = {
+      url: 'http://example.com',
+      status: 'success',
+      content: '<html></html>',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      fetchTime: 342,
+    };
+
+    const { getByTestId } = renderWithMantine(
+      <UrlCard urlRecord={urlRecord} onClick={mockOnClick} onRefetch={mockOnRefetch} />
+    );
+
+    const refetchButton = getByTestId('refetch-button');
+    refetchButton.click();
+
+    expect(mockOnRefetch).toHaveBeenCalledWith('http://example.com');
+    expect(mockOnClick).not.toHaveBeenCalled(); // Should not trigger card click
+  });
 });

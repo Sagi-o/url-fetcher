@@ -1,15 +1,31 @@
-import { Loader, Center, Title, Stack, Text } from '@mantine/core';
+import { Loader, Center, Title, Stack, Text, Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { useUrlList } from '../../dal/url/url.api-hooks';
+import { useState } from 'react';
+import { UrlSortField, SortOrder } from '@org/shared';
+import { useUrlList, useFetchUrls } from '../../dal/url/url.api-hooks';
 import { UrlSubmissionForm } from './UrlSubmissionForm';
 import { EmptyState } from '../../components/EmptyState';
-import { useUrlEvents } from '../../hooks/useUrlEvents';
+import { useUrlSseEvents } from '../../hooks/useUrlSseEvents';
 import { UrlCard } from '../../components/UrlCard';
+import { SortControl } from '../../components/SortControl';
 
 export const UrlListPage = () => {
-  useUrlEvents();
+  useUrlSseEvents();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useUrlList();
+  const [sortBy, setSortBy] = useState<UrlSortField>('updatedAt');
+  const [order, setOrder] = useState<SortOrder>('desc');
+
+  const { data, isLoading, error } = useUrlList({ sortBy, order });
+  const { mutate: refetchUrl } = useFetchUrls();
+
+  const handleSortChange = (newSortBy: UrlSortField, newOrder: SortOrder) => {
+    setSortBy(newSortBy);
+    setOrder(newOrder);
+  };
+
+  const handleRefetch = (url: string) => {
+    refetchUrl([url]);
+  };
 
   if (isLoading) {
     return (
@@ -31,7 +47,13 @@ export const UrlListPage = () => {
     <Stack gap="md">
       <UrlSubmissionForm />
 
-      <Title order={2}>URL List</Title>
+      <Group justify="space-between" align="flex-end">
+        <Title order={2}>URL List</Title>
+        {data.data && data.data.length > 0 && (
+          <SortControl sortBy={sortBy} order={order} onSortChange={handleSortChange} />
+        )}
+      </Group>
+
       {data.data && data.data.length > 0 ? (
         data.data.map((urlRecord) => (
           <UrlCard
@@ -42,6 +64,7 @@ export const UrlListPage = () => {
                 navigate(`/content?url=${encodeURIComponent(urlRecord.url)}`);
               }
             }}
+            onRefetch={handleRefetch}
           />
         ))
       ) : (

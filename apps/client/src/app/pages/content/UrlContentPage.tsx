@@ -67,7 +67,7 @@ export const UrlContentPage = () => {
             </Tabs.List>
 
             <Tabs.Panel value="preview" pt="md" data-testid="preview-panel">
-              <Card withBorder p="md" bg="gray.0">
+              <Card withBorder p="md" bg="white" style={{ color: 'black' }}>
                 <SafeHtmlRenderer html={data.data || ''} />
               </Card>
             </Tabs.Panel>

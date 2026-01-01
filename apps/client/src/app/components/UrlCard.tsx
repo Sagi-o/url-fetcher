@@ -1,18 +1,24 @@
-import { Card, Text, Stack, Badge, Group } from '@mantine/core';
+import { Card, Text, Stack, Badge, Group, ActionIcon, Tooltip } from '@mantine/core';
 import { UrlRecord } from '@org/shared';
-import { IconClock } from '@tabler/icons-react';
+import { IconClock, IconRefresh } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
 import classes from './UrlCard.module.css';
 
 interface UrlCardProps {
   urlRecord: UrlRecord;
   onClick: () => void;
+  onRefetch?: (url: string) => void;
 }
 
-export const UrlCard = ({ urlRecord, onClick }: UrlCardProps) => {
+export const UrlCard = ({ urlRecord, onClick, onRefetch }: UrlCardProps) => {
   const isClickable = urlRecord.status === 'success';
   const timestamp = urlRecord.updatedAt ?? urlRecord.createdAt;
   const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
+
+  const handleRefetch = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onRefetch?.(urlRecord.url);
+  };
 
   return (
     <Card
@@ -28,7 +34,22 @@ export const UrlCard = ({ urlRecord, onClick }: UrlCardProps) => {
       onClick={onClick}
     >
       <Stack gap="xs">
-        <Text fw={500} data-testid="url-text">{urlRecord.url}</Text>
+        <Group justify="space-between" align="flex-start">
+          <Text fw={500} data-testid="url-text" style={{ flex: 1 }}>{urlRecord.url}</Text>
+          {onRefetch && urlRecord.status !== 'loading' && (
+            <Tooltip label="Refetch URL">
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="sm"
+                onClick={handleRefetch}
+                data-testid="refetch-button"
+              >
+                <IconRefresh size={16} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </Group>
         <Group gap="xs">
           <Badge
             data-testid="status-badge"

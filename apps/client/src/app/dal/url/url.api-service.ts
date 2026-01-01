@@ -1,13 +1,17 @@
 import { api } from '../api';
-import { HttpResponse, UrlRecord } from '@org/shared';
+import { HttpResponse, UrlRecord, UrlListQueryParams } from '@org/shared';
+import { buildSortQueryString } from '../../utils/query-params';
 
 const controllerPath = '/url';
 
 export const urlApiService = {
-  getList: async () => {
-    const { data } = await api.get<HttpResponse<UrlRecord[]>>(
-      `${controllerPath}/list`
-    );
+  getList: async (params?: UrlListQueryParams) => {
+    const queryString = buildSortQueryString(params);
+    const url = queryString
+      ? `${controllerPath}/list?${queryString}`
+      : `${controllerPath}/list`;
+
+    const { data } = await api.get<HttpResponse<UrlRecord[]>>(url);
     return data;
   },
 

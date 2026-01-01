@@ -24,8 +24,6 @@ export type UrlRecord = UrlRecordBase &
 
 export type FetchStatus = 'loading' | 'failed' | 'success';
 
-export type HttpResponse<T = unknown> = { success: boolean; message?: string; data?: T };
-
 export enum UrlServiceEvents {
   URL_UPDATED = 'urlUpdated',
 }
