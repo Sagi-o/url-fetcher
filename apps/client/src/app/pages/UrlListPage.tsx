@@ -1,10 +1,15 @@
-import { Card, Text, Stack, Badge, Loader, Center, Title } from '@mantine/core';
-import { useUrlApi } from '../dal/url/useUrlApi';
+import { Loader, Center, Title, Stack, Text } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
+import { useUrlList } from '../dal/url/url.api-hooks';
 import { UrlSubmissionForm } from '../components/UrlSubmissionForm';
+import { EmptyState } from '../components/EmptyState';
+import { useUrlEvents } from '../hooks/useUrlEvents';
+import { UrlCard } from '../components/UrlCard';
 
 export const UrlListPage = () => {
-  const { getList } = useUrlApi();
-  const { data, isLoading, error } = getList;
+  useUrlEvents();
+  const navigate = useNavigate();
+  const { data, isLoading, error } = useUrlList();
 
   if (isLoading) {
     return (
@@ -27,25 +32,21 @@ export const UrlListPage = () => {
       <UrlSubmissionForm />
 
       <Title order={2}>URL List</Title>
-      {data.data?.map((urlRecord) => (
-        <Card key={urlRecord.url} shadow="sm" padding="lg" radius="md" withBorder>
-          <Stack gap="xs">
-            <Text fw={500}>{urlRecord.url}</Text>
-            <Badge
-              color={
-                urlRecord.status === 'success'
-                  ? 'green'
-                  : urlRecord.status === 'loading'
-                  ? 'blue'
-                  : 'red'
+      {data.data && data.data.length > 0 ? (
+        data.data.map((urlRecord) => (
+          <UrlCard
+            key={urlRecord.url}
+            urlRecord={urlRecord}
+            onClick={() => {
+              if (urlRecord.status === 'success') {
+                navigate(`/content?url=${encodeURIComponent(urlRecord.url)}`);
               }
-              variant="light"
-            >
-              {urlRecord.status}
-            </Badge>
-          </Stack>
-        </Card>
-      ))}
+            }}
+          />
+        ))
+      ) : (
+        <EmptyState message="No URLs submitted yet. Submit URLs above to get started!" />
+      )}
     </Stack>
   );
 };

@@ -3,7 +3,8 @@ import { urlService } from './url.service';
 import { validateDTO } from '../../utils/dto-validation';
 import { FetchUrlsDTO } from './url.dto';
 import { BadRequestError } from '../../utils/http-errors';
-import { HttpResponse } from '@org/shared';
+import { HttpResponse, UrlServiceEvents } from '@org/shared';
+import { createSSEConnection } from '../../utils/sse';
 
 export const urlController = (app: FastifyInstance) => {
   app.get('/list', async (_req, reply) => {
@@ -43,5 +44,15 @@ export const urlController = (app: FastifyInstance) => {
         message: 'Error with fetching provided url',
       });
     }
+  });
+
+  app.get('/events', async (req, reply) => {
+    const { sendEvent, onClose } = createSSEConnection(req, reply);
+
+    urlService.on(UrlServiceEvents.URL_UPDATED, sendEvent);
+
+    onClose(() => {
+      urlService.off(UrlServiceEvents.URL_UPDATED, sendEvent);
+    });
   });
 };

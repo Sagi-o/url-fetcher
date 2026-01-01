@@ -1,8 +1,8 @@
-import { IsString, IsArray, MinLength } from 'class-validator';
+import { IsString, IsArray, IsUrl } from 'class-validator';
 
 export class FetchUrlsDTO {
   @IsArray()
   @IsString({ each: true })
-  @MinLength(1)
+  @IsUrl({}, { each: true, message: 'Each item must be a valid URL' })
   urls!: string[];
 }

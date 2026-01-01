@@ -1,11 +1,11 @@
 import { api } from '../api';
-import { HttpResponse, UrlRecordBase } from '@org/shared';
+import { HttpResponse, UrlRecord } from '@org/shared';
 
 const controllerPath = '/url';
 
 export const urlApiService = {
   getList: async () => {
-    const { data } = await api.get<HttpResponse<UrlRecordBase[]>>(
+    const { data } = await api.get<HttpResponse<UrlRecord[]>>(
       `${controllerPath}/list`
     );
     return data;
@@ -19,7 +19,7 @@ export const urlApiService = {
   },
 
   fetchUrls: async (urls: string[]) => {
-    const { data } = await api.post<HttpResponse<UrlRecordBase[]>>(
+    const { data } = await api.post<HttpResponse<UrlRecord[]>>(
       `${controllerPath}/fetch`,
       { urls }
     );

@@ -1,13 +1,13 @@
 import { Button, Textarea, Stack, Card, Title } from '@mantine/core';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useUrlApi } from '../dal/url/useUrlApi';
+import { useFetchUrls } from '../dal/url/url.api-hooks';
 import { notifications } from '@mantine/notifications';
 
 export const UrlSubmissionForm = () => {
   const [urlsInput, setUrlsInput] = useState('');
   const queryClient = useQueryClient();
-  const { fetchUrls } = useUrlApi();
+  const fetchUrls = useFetchUrls();
 
   const handleSubmit = () => {
     const urls = urlsInput
