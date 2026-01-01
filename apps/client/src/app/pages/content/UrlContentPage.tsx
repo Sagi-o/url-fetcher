@@ -45,36 +45,36 @@ export const UrlContentPage = () => {
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="md" data-testid="url-content-page">
       <Group justify="space-between" align="center">
         <BackButton />
-        <Title order={2}>URL Content</Title>
+        <Title order={2} data-testid="page-title">URL Content</Title>
         <div style={{ width: '120px' }} /> {/* Spacer for centering */}
       </Group>
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card shadow="sm" padding="lg" radius="md" withBorder data-testid="content-card">
         <Stack gap="md">
-          <Text fw={500} size="sm" c="dimmed">
+          <Text fw={500} size="sm" c="dimmed" data-testid="current-url">
             URL: {url}
           </Text>
-          <Tabs defaultValue="preview">
+          <Tabs defaultValue="preview" data-testid="content-tabs">
             <Tabs.List>
-              <Tabs.Tab value="preview" leftSection={<IconEye size={16} />}>
+              <Tabs.Tab value="preview" leftSection={<IconEye size={16} />} data-testid="preview-tab">
                 Preview
               </Tabs.Tab>
-              <Tabs.Tab value="source" leftSection={<IconCode size={16} />}>
+              <Tabs.Tab value="source" leftSection={<IconCode size={16} />} data-testid="source-tab">
                 Source
               </Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel value="preview" pt="md">
+            <Tabs.Panel value="preview" pt="md" data-testid="preview-panel">
               <Card withBorder p="md" bg="gray.0">
                 <SafeHtmlRenderer html={data.data || ''} />
               </Card>
             </Tabs.Panel>
 
-            <Tabs.Panel value="source" pt="md">
+            <Tabs.Panel value="source" pt="md" data-testid="source-panel">
               <Card withBorder p="md" bg="gray.0">
-                <Code block style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                <Code block style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }} data-testid="source-code">
                   {data.data || ''}
                 </Code>
               </Card>

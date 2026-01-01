@@ -9,10 +9,10 @@ interface EmptyStateProps {
 
 export const EmptyState = ({ message, action }: EmptyStateProps) => {
   return (
-    <Center h="200px">
+    <Center h="200px" data-testid="empty-state">
       <Stack align="center" gap="md">
         <IconInbox size={48} stroke={1.5} color="var(--mantine-color-dimmed)" />
-        <Text c="dimmed" size="lg" ta="center">
+        <Text c="dimmed" size="lg" ta="center" data-testid="empty-state-message">
           {message}
         </Text>
         {action}

@@ -45,17 +45,18 @@ export const UrlSubmissionForm = () => {
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card shadow="sm" padding="lg" radius="md" withBorder data-testid="url-submission-form">
       <Stack gap="md">
         <Title order={3}>Submit URLs</Title>
         <Textarea
+          data-testid="url-input"
           placeholder="Enter URLs (one per line)&#10;http://example1.com&#10;http://example2.com"
           value={urlsInput}
           onChange={(e) => setUrlsInput(e.target.value)}
           minRows={4}
           autosize
         />
-        <Button onClick={handleSubmit} loading={fetchUrls.isPending} fullWidth>
+        <Button data-testid="fetch-urls-button" onClick={handleSubmit} loading={fetchUrls.isPending} fullWidth>
           Fetch URLs
         </Button>
       </Stack>

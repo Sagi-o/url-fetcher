@@ -7,6 +7,7 @@ export const BackButton = () => {
 
   return (
     <Button
+      data-testid="back-button"
       variant="subtle"
       leftSection={<IconArrowLeft size={16} />}
       onClick={() => navigate('/')}

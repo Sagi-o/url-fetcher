@@ -108,6 +108,35 @@ url-fetcher/
     └── shared/          # Shared TypeScript types
 ```
 
+## Testing
+
+Run all tests:
+```bash
+npm test
+```
+
+Run specific test suites:
+```bash
+npm run test:server  # Backend tests only
+npm run test:client  # Frontend tests only
+```
+
+Run E2E tests with Cypress:
+```bash
+npm run test:e2e               # Run E2E tests
+npm run test:e2e -- --headed   # Run with visible browser
+```
+
+**Test Coverage:**
+- **Backend:** 8 tests covering URL service, fetch operations, events, and error handling
+- **Frontend:** 4 tests covering component rendering, status display, and interactions
+- **E2E:** 7 Cypress tests using Page Object pattern covering complete user flows (URL submission, navigation, content viewing)
+
+**Test Architecture:**
+- All UI components use `data-testid` attributes for reliable element selection
+- Cypress tests follow the Page Object pattern for maintainability
+- Page objects located in `apps/client-e2e/src/support/page-objects/`
+
 ## Architecture
 
 - **Type Safety:** Shared types via `@org/shared` package, discriminated unions, no `any` types

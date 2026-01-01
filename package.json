@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "nx run-many -t=serve",
     "build": "npx nx run-many --target=build --projects=server,client",
-    "start": "node ./apps/server/dist/main.js"
+    "start": "node ./apps/server/dist/main.js",
+    "test": "nx run-many -t=test",
+    "test:server": "nx test server",
+    "test:client": "nx test client",
+    "test:e2e": "nx e2e client-e2e --headed"
   },
   "private": true,
   "devDependencies": {
@@ -24,6 +28,7 @@
     "@swc/helpers": "~0.5.11",
     "@swc/jest": "~0.2.38",
     "@testing-library/dom": "10.4.0",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "16.3.0",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^30.0.0",
