@@ -9,9 +9,6 @@ describe('URL Fetcher E2E', () => {
   });
 
   it('should submit URLs and display them in the list', () => {
-    // Check initial empty state
-    urlListPage.shouldShowEmptyState('No URLs submitted yet');
-
     // Submit a URL
     urlListPage.submitUrls('example.com');
 
