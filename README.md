@@ -1,104 +1,194 @@
-# New Nx Repository
+# URL Fetcher
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A full-stack application that fetches the content of HTTP URLs and displays the results via a web interface.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Monorepo Structure
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+This project is organized as an NX monorepo with the following structure:
 
-## Generate a library
+- **`apps/server`** - Fastify backend API that handles URL fetching
+- **`apps/client`** - React frontend web application
+- **`libs/shared`** - Shared TypeScript types used by both client and server
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+This structure provides:
+- **Type safety** - Shared types ensure consistent data structures across the stack
+- **Code organization** - Clear separation between frontend, backend, and shared code
+- **Development efficiency** - Run both apps simultaneously with a single command
+
+## Features
+
+- Submit one or more URLs to be fetched
+- View all submitted URLs with their fetch status (loading, success, failed)
+- Real-time updates via Server-Sent Events (SSE)
+- Display fetched content with both preview (rendered HTML) and source code views
+- Track fetch times and error messages
+- URL validation and normalization
+- Safe HTML rendering with XSS prevention
+- Responsive UI with Mantine components
+
+## Tech Stack
+
+### Backend
+- **Fastify** - Fast and low overhead web framework
+- **TypeScript** - Type-safe development
+- **class-validator** - DTO validation
+- **EventEmitter** - Real-time updates via SSE
+
+### Frontend
+- **React** - UI library
+- **TypeScript** - Type-safe development
+- **Mantine** - Component library
+- **React Router** - Navigation
+- **TanStack Query (React Query)** - Data fetching and caching
+- **date-fns** - Date formatting
+- **DOMPurify** - XSS prevention
+
+
+## Installation
+
+```bash
+npm install
 ```
 
-## Run tasks
+## Running the Application
 
-To build the library use:
+Start both the backend server and frontend client in development mode:
 
-```sh
-npx nx build pkg1
+```bash
+npm run dev
 ```
 
-To run any task with Nx use:
+This will start:
+- Backend API server at `http://localhost:3333`
+- Frontend web application at `http://localhost:4200`
 
-```sh
-npx nx <target> <project-name>
+## API Endpoints
+
+### POST /url/fetch
+Submit URLs to be fetched.
+
+**Request:**
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"urls": ["http://example.com", "http://google.com"]}' http://localhost:3333/url/fetch
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
-
-```
-npx nx release
-```
-
-Pass `--dry-run` to see what would happen without actually releasing the library.
-
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "http://example.com",
+      "status": "loading",
+      "createdAt": 1234567890,
+      "updatedAt": 1234567890
+    }
+  ]
+}
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+### GET /url/list
+Get all submitted URLs with their fetch status.
 
-```sh
-npx nx sync:check
+**Request:**
+```bash
+curl http://localhost:3333/url/list
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "url": "http://example.com",
+      "status": "success",
+      "content": "<html>...</html>",
+      "createdAt": 1234567890,
+      "updatedAt": 1234567891,
+      "fetchTime": 342
+    }
+  ]
+}
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### GET /url/content?url=<url>
+Get the fetched content for a specific URL.
 
-## Install Nx Console
+**Request:**
+```bash
+curl http://localhost:3333/url/content?url=http://example.com
+```
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+**Response:**
+```json
+{
+  "success": true,
+  "data": "<html>...</html>"
+}
+```
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### GET /url/events
+Server-Sent Events endpoint for real-time updates.
 
-## Useful links
+## Project Structure
 
-Learn more:
+```
+url-fetcher/
+├── apps/
+│   ├── client/          # React frontend application
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   │   ├── components/   # Reusable UI components
+│   │   │   │   ├── dal/          # Data access layer (API hooks)
+│   │   │   │   ├── hooks/        # Custom React hooks
+│   │   │   │   ├── pages/        # Page components
+│   │   │   │   └── services/     # API services
+│   │   │   └── main.tsx
+│   │   └── project.json
+│   └── server/          # Fastify backend API
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── routes/       # API routes and controllers
+│       │   │   └── utils/        # Utilities (SSE, DB, helpers)
+│       │   └── main.ts
+│       └── project.json
+└── libs/
+    └── shared/          # Shared types between client and server
+        └── src/
+            └── lib/
+                └── shared.ts     # Type definitions
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```
 
-And join the Nx community:
+## Architecture Highlights
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Type Safety
+- Shared TypeScript types between client and server via `@org/shared` package
+- Discriminated unions for `UrlRecord` type ensuring type safety based on fetch status
+- No `any` types throughout the codebase
+
+### Real-time Updates
+- Server-Sent Events (SSE) for pushing updates to the client
+- Automatic UI updates when URL fetch status changes
+- React Query cache invalidation on SSE events
+
+### Validation
+- DTO validation with `class-validator` on the backend
+- URL normalization (auto-adds `https://` if missing)
+- Input validation at multiple layers
+
+### Security
+- DOMPurify for XSS prevention when rendering HTML
+- CORS configured for cross-origin requests
+- Safe HTML rendering with whitelisted tags and attributes
+
+### Separation of Concerns
+- Service layer for business logic
+- Controller layer for HTTP handling
+- Separate hooks for API calls vs. SSE events
+- Component-based UI architecture
+
+## License
+
+MIT
