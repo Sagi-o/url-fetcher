@@ -1,4 +1,4 @@
-import { Center, Stack, Text, Button } from '@mantine/core';
+import { Center, Stack, Text } from '@mantine/core';
 import { IconInbox } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
