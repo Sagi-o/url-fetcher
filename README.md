@@ -95,7 +95,7 @@ curl http://localhost:3000/url/content?url=http://example.com
 ```
 
 ### GET /url/events
-Server-Sent Events endpoint for real-time updates.
+Server-Sent Events endpoint for real-time updates. The client establishes a persistent connection, and the server pushes `UrlRecord` data whenever a URL's status changes (from loading → success/failed). This enables live UI updates without polling. Each event contains the complete updated URL record with the latest status, content (if successful), or error message (if failed).
 
 ## Project Structure
 
