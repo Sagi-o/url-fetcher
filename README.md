@@ -124,7 +124,6 @@ npm run test:client  # Frontend tests only
 Run E2E tests with Cypress:
 ```bash
 npm run test:e2e               # Run E2E tests
-npm run test:e2e -- --headed   # Run with visible browser
 ```
 
 **Test Coverage:**
