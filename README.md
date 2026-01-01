@@ -10,7 +10,7 @@ npm run dev
 ```
 
 This will start:
-- Backend API server at `http://localhost:3333`
+- Backend API server at `http://localhost:3000`
 - Frontend web application at `http://localhost:4200`
 
 ## Tech Stack
@@ -35,7 +35,7 @@ Submit URLs to be fetched.
 
 **Request:**
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"urls": ["http://example.com", "http://google.com"]}' http://localhost:3333/url/fetch
+curl -X POST -H "Content-Type: application/json" -d '{"urls": ["http://example.com", "http://google.com"]}' http://localhost:3000/url/fetch
 ```
 
 **Response:**
@@ -58,7 +58,7 @@ Get all submitted URLs with their fetch status.
 
 **Request:**
 ```bash
-curl http://localhost:3333/url/list
+curl http://localhost:3000/url/list
 ```
 
 **Response:**
@@ -83,7 +83,7 @@ Get the fetched content for a specific URL.
 
 **Request:**
 ```bash
-curl http://localhost:3333/url/content?url=http://example.com
+curl http://localhost:3000/url/content?url=http://example.com
 ```
 
 **Response:**
