@@ -1,9 +1,9 @@
 import { Card, Text, Stack, Loader, Center, Title, Button, Group, Tabs, Code } from '@mantine/core';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useUrlContent } from '../dal/url/url.api-hooks';
-import { EmptyState } from '../components/EmptyState';
-import { SafeHtmlRenderer } from '../components/SafeHtmlRenderer';
-import { BackButton } from '../components/BackButton';
+import { useUrlContent } from '../../dal/url/url.api-hooks';
+import { EmptyState } from '../../components/EmptyState';
+import { SafeHtmlRenderer } from '../../components/SafeHtmlRenderer';
+import { BackButton } from '../../components/BackButton';
 import { IconHome, IconEye, IconCode } from '@tabler/icons-react';
 
 export const UrlContentPage = () => {

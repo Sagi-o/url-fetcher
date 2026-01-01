@@ -1,7 +1,7 @@
 import { Button, Textarea, Stack, Card, Title } from '@mantine/core';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useFetchUrls } from '../dal/url/url.api-hooks';
+import { useFetchUrls } from '../../dal/url/url.api-hooks';
 import { notifications } from '@mantine/notifications';
 
 export const UrlSubmissionForm = () => {

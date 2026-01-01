@@ -27,11 +27,13 @@ export class UrlService extends EventEmitter {
     const results: UrlRecordBase[] = [];
 
     for (const url of normalizedUrls) {
-      const createdAt = Date.now();
+      const existingRecord = urlTable.get(url);
+      const createdAt = existingRecord?.createdAt ?? Date.now();
+      const updatedAt = Date.now();
 
       // Add to table with loading status
-      urlTable.set(url, { url, status: 'loading', createdAt });
-      results.push({ url, status: 'loading', createdAt });
+      urlTable.set(url, { url, status: 'loading', createdAt, updatedAt });
+      results.push({ url, status: 'loading', createdAt, updatedAt });
 
       // Fetch in background
       this.fetchUrlContent(url, createdAt);
@@ -52,18 +54,21 @@ export class UrlService extends EventEmitter {
 
       const content = await response.text();
       const fetchTime = Date.now() - startTime;
+      const updatedAt = Date.now();
 
       const record = {
         url,
         status: 'success' as const,
         content,
         createdAt,
+        updatedAt,
         fetchTime,
       };
       urlTable.set(url, record);
       this.emit(UrlServiceEvents.URL_UPDATED, record);
     } catch (error) {
       const fetchTime = Date.now() - startTime;
+      const updatedAt = Date.now();
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
 
       const record = {
@@ -71,6 +76,7 @@ export class UrlService extends EventEmitter {
         status: 'failed' as const,
         errorMessage,
         createdAt,
+        updatedAt,
         fetchTime,
       };
       urlTable.set(url, record);

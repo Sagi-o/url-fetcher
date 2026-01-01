@@ -1,6 +1,7 @@
 import { Card, Text, Stack, Badge, Group } from '@mantine/core';
 import { UrlRecord } from '@org/shared';
 import { IconClock } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
 import classes from './UrlCard.module.css';
 
 interface UrlCardProps {
@@ -10,6 +11,8 @@ interface UrlCardProps {
 
 export const UrlCard = ({ urlRecord, onClick }: UrlCardProps) => {
   const isClickable = urlRecord.status === 'success';
+  const timestamp = urlRecord.updatedAt ?? urlRecord.createdAt;
+  const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
 
   return (
     <Card
@@ -37,11 +40,18 @@ export const UrlCard = ({ urlRecord, onClick }: UrlCardProps) => {
             {urlRecord.status}
           </Badge>
           {urlRecord.status !== 'loading' && 'fetchTime' in urlRecord && (
-            <Badge variant="outline" color="gray" leftSection={<IconClock size={12} />}>
+            <Badge
+              variant="outline"
+              color="gray"
+              leftSection={<IconClock size={12} />}
+            >
               {urlRecord.fetchTime}ms
             </Badge>
           )}
         </Group>
+        <Text size="xs" c="dimmed">
+          {timeAgo}
+        </Text>
         {urlRecord.status === 'failed' && 'errorMessage' in urlRecord && (
           <Text size="sm" c="red">
             Error: {urlRecord.errorMessage}

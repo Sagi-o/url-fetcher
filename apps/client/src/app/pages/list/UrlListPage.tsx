@@ -1,10 +1,10 @@
 import { Loader, Center, Title, Stack, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { useUrlList } from '../dal/url/url.api-hooks';
-import { UrlSubmissionForm } from '../components/UrlSubmissionForm';
-import { EmptyState } from '../components/EmptyState';
-import { useUrlEvents } from '../hooks/useUrlEvents';
-import { UrlCard } from '../components/UrlCard';
+import { useUrlList } from '../../dal/url/url.api-hooks';
+import { UrlSubmissionForm } from './UrlSubmissionForm';
+import { EmptyState } from '../../components/EmptyState';
+import { useUrlEvents } from '../../hooks/useUrlEvents';
+import { UrlCard } from '../../components/UrlCard';
 
 export const UrlListPage = () => {
   useUrlEvents();
