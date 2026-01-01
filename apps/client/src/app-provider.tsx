@@ -11,7 +11,7 @@ export const AppProvider = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider defaultColorScheme="light">
+      <MantineProvider defaultColorScheme="dark">
         <Notifications />
         <RouterProvider router={router} />
       </MantineProvider>

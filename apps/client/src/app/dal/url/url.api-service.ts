@@ -8,14 +8,14 @@ export const urlApiService = {
     const { data } = await api.get<HttpResponse<UrlRecordBase[]>>(
       `${controllerPath}/list`
     );
-    return data.data!;
+    return data;
   },
 
   getContent: async (url: string) => {
     const { data } = await api.get<HttpResponse<string>>(
       `${controllerPath}/content?url=${url}`
     );
-    return data.data!;
+    return data;
   },
 
   fetchUrls: async (urls: string[]) => {
@@ -23,6 +23,6 @@ export const urlApiService = {
       `${controllerPath}/fetch`,
       { urls }
     );
-    return data.data!;
+    return data;
   },
 };
