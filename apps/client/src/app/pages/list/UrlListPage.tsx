@@ -1,6 +1,7 @@
 import { Loader, Center, Title, Stack, Text, Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { UrlSortField, SortOrder } from '@org/shared';
 import { useUrlList, useFetchUrls } from '../../dal/url/url.api-hooks';
 import { UrlSubmissionForm } from './UrlSubmissionForm';
@@ -12,6 +13,7 @@ import { SortControl } from '../../components/SortControl';
 export const UrlListPage = () => {
   useUrlSseEvents();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [sortBy, setSortBy] = useState<UrlSortField>('updatedAt');
   const [order, setOrder] = useState<SortOrder>('desc');
 
@@ -25,6 +27,10 @@ export const UrlListPage = () => {
 
   const handleRefetch = (url: string) => {
     refetchUrl([url]);
+
+    queryClient.invalidateQueries({
+      queryKey: ['url', 'content', url],
+    });
   };
 
   if (isLoading) {
