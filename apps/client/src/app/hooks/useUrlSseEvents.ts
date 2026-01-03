@@ -32,26 +32,6 @@ export const useUrlSseEvents = () => {
           };
         }
       );
-
-      /**
-       * Alternative approach: Cache invalidation strategy
-       * This would ensure proper sort order when updatedAt/createdAt changes
-       *
-       * Why invalidation over direct cache update?
-       * - When updatedAt/createdAt changes, the sort order should change
-       * - Direct cache update (setQueriesData) updates the item in-place, preserving old order
-       * - Invalidation triggers a refetch with current sort params, getting properly sorted data from server
-       *
-       * Trade-offs:
-       * ✅ Always shows correct server-side sort order
-       * ✅ Simpler logic - no client-side re-sorting needed
-       * ⚠️ Adds network request per SSE event (mitigated by staleTime: 30s caching)
-       *
-       * To use invalidation instead:
-       */
-      // queryClient.invalidateQueries({
-      //   queryKey: ['url', 'list'],
-      // });
     };
 
     eventSource.onerror = (error) => {

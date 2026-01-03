@@ -2,18 +2,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { urlApiService } from './url.api-service';
 import { UrlListQueryParams } from '@org/shared';
 
-/**
- * Fetch URL list with caching strategy:
- * - staleTime: 30s - Data is considered fresh for 30 seconds
- * - gcTime: 5min - Unused data stays in cache for 5 minutes
- * - SSE updates keep cache synchronized in real-time
- */
 export const useUrlList = (params?: UrlListQueryParams) => {
   return useQuery({
     queryKey: ['url', 'list', params],
     queryFn: () => urlApiService.getList(params),
     staleTime: 30 * 1000, // 30 seconds
-    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -28,7 +21,6 @@ export const useUrlContent = (url: string) => {
     queryFn: () => urlApiService.getContent(url),
     enabled: !!url,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };
 
