@@ -10,11 +10,6 @@ export const useUrlList = (params?: UrlListQueryParams) => {
   });
 };
 
-/**
- * Fetch URL content with aggressive caching:
- * - staleTime: 5min - Content rarely changes once fetched
- * - gcTime: 10min - Keep content in memory longer
- */
 export const useUrlContent = (url: string) => {
   return useQuery({
     queryKey: ['url', 'content', url],
