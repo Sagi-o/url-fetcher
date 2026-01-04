@@ -1,10 +1,23 @@
-import { Button, Textarea, Stack, Card, Title } from '@mantine/core';
+import { Button, Textarea, Stack, Card, Title, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFetchUrls } from '../../dal/url/url.api-hooks';
 import { notifications } from '@mantine/notifications';
 
 const validUrlPattern = /^[a-zA-Z0-9.\-_~:/?#[\]@!$&'()*+;=\s\n]*$/;
+
+const EXAMPLE_URLS = [
+  'https://github.com',
+  'https://stackoverflow.com',
+  'https://developer.mozilla.org',
+  'https://www.npmjs.com',
+  'https://react.dev',
+  'https://nodejs.org',
+  'https://www.typescriptlang.org',
+  'https://vitejs.dev',
+  'https://mantine.dev',
+  'https://tanstack.com/query',
+];
 
 export const UrlSubmissionForm = () => {
   const queryClient = useQueryClient();
@@ -50,6 +63,10 @@ export const UrlSubmissionForm = () => {
     // If invalid characters, don't update state (prevents typing them)
   };
 
+  const handleAddExamples = () => {
+    form.setFieldValue('urlsInput', EXAMPLE_URLS.join('\n'));
+  };
+
   const handleSubmit = form.onSubmit((values) => {
     const urls = values.urlsInput
       .split('\n')
@@ -90,9 +107,14 @@ export const UrlSubmissionForm = () => {
             minRows={4}
             autosize
           />
-          <Button data-testid="fetch-urls-button" type="submit" loading={fetchUrls.isPending} fullWidth>
-            Fetch URLs
-          </Button>
+          <Group gap="sm">
+            <Button variant="light" onClick={handleAddExamples} disabled={fetchUrls.isPending}>
+              Add 10 Example URLs
+            </Button>
+            <Button data-testid="fetch-urls-button" type="submit" loading={fetchUrls.isPending} style={{ flex: 1 }}>
+              Fetch URLs
+            </Button>
+          </Group>
         </Stack>
       </form>
     </Card>

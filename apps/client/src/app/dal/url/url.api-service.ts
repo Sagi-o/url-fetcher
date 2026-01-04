@@ -1,5 +1,10 @@
 import { api } from '../api';
-import { HttpResponse, UrlRecord, UrlListQueryParams } from '@org/shared';
+import {
+  HttpResponse,
+  UrlRecord,
+  UrlListQueryParams,
+  PaginatedResponse,
+} from '@org/shared';
 import { buildSortQueryString } from '../../utils/query-params';
 
 const controllerPath = '/url';
@@ -11,7 +16,9 @@ export const urlApiService = {
       ? `${controllerPath}/list?${queryString}`
       : `${controllerPath}/list`;
 
-    const { data } = await api.get<HttpResponse<UrlRecord[]>>(url);
+    const { data } = await api.get<HttpResponse<PaginatedResponse<UrlRecord>>>(
+      url
+    );
     return data;
   },
 
@@ -23,10 +30,9 @@ export const urlApiService = {
   },
 
   fetchUrls: async (urls: string[]) => {
-    const { data } = await api.post<HttpResponse<UrlRecord[]>>(
-      `${controllerPath}/fetch`,
-      { urls }
-    );
+    const { data } = await api.post<
+      HttpResponse<(UrlRecord & { status: 'loading' })[]>
+    >(`${controllerPath}/fetch`, { urls });
     return data;
   },
 };

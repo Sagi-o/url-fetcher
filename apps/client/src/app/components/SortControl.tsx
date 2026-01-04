@@ -26,13 +26,14 @@ export const SortControl = ({ sortBy, order, onSortChange }: SortControlProps) =
   };
 
   return (
-    <Group gap="xs">
+    <Group gap="xs" data-testid="sort-control">
       <Select
         label="Sort by"
         data={SORT_OPTIONS}
         value={sortBy}
         onChange={handleSortFieldChange}
         w={150}
+        data-testid="sort-field-select"
       />
       <ActionIcon
         variant="light"
@@ -40,6 +41,7 @@ export const SortControl = ({ sortBy, order, onSortChange }: SortControlProps) =
         onClick={toggleOrder}
         mt={22}
         title={`Sort ${order === 'asc' ? 'ascending' : 'descending'}`}
+        data-testid="sort-order-toggle"
       >
         {order === 'asc' ? <IconArrowUp size={18} /> : <IconArrowDown size={18} />}
       </ActionIcon>

@@ -7,6 +7,7 @@ export default defineConfig({
       cypressDir: 'src',
       bundler: 'vite',
       webServerCommands: {
+        // Only start client - server should be running manually
         default: 'npx nx run @org/client:dev',
         production: 'npx nx run @org/client:preview',
       },
@@ -16,5 +17,8 @@ export default defineConfig({
     baseUrl: 'http://localhost:4200',
     video: false,
     screenshotOnRunFailure: true,
+    exitOnFail: false,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
   },
 });

@@ -4,25 +4,35 @@ import {
   UrlServiceEvents,
   UrlSortField,
   SortOrder,
+  PaginationParams,
+  PaginatedResponse,
 } from '@org/shared';
 import { urlTable } from '../../utils/db';
 import { EventEmitter } from 'events';
 import { normalizeUrls } from '../../utils/url-helpers';
 import { sortBy as sortArray } from '../../utils/sort';
+import { paginate } from '../../utils/pagination';
 import { uniq } from 'lodash';
 
 export class UrlService extends EventEmitter {
   constructor() {
     super();
   }
-  getUrlList(sortBy?: UrlSortField, order: SortOrder = 'desc'): UrlRecord[] {
-    const urls = Array.from(urlTable.values());
 
-    if (!sortBy) {
-      return urls;
+  getUrlList(
+    sortBy?: UrlSortField,
+    order: SortOrder = 'desc',
+    paginationParams: PaginationParams = { page: 1, limit: 10 }
+  ): PaginatedResponse<UrlRecord> {
+    let urls = Array.from(urlTable.values());
+
+    // Apply sorting
+    if (sortBy) {
+      urls = sortArray<UrlRecord, UrlSortField>(urls, { field: sortBy, order });
     }
 
-    return sortArray<UrlRecord, UrlSortField>(urls, { field: sortBy, order });
+    // Always return paginated response
+    return paginate(urls, paginationParams);
   }
 
   getUrlContent(url: string): string {

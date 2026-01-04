@@ -73,18 +73,65 @@ describe('UrlService', () => {
   });
 
   describe('getUrlList', () => {
-    it('should return empty array when no URLs exist', () => {
-      const list = urlService.getUrlList();
-      expect(list).toEqual([]);
+    it('should return empty paginated response when no URLs exist', () => {
+      const result = urlService.getUrlList();
+      expect(result.data).toEqual([]);
+      expect(result.meta).toMatchObject({
+        currentPage: 1,
+        totalPages: 0,
+        totalItems: 0,
+        itemsPerPage: 10,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
     });
 
-    it('should return all submitted URLs', async () => {
+    it('should return paginated list of submitted URLs', async () => {
       await urlService.fetchUrls(['http://example.com', 'http://google.com']);
 
-      const list = urlService.getUrlList();
-      expect(list).toHaveLength(2);
-      expect(list.map((r) => r.url)).toContain('http://example.com');
-      expect(list.map((r) => r.url)).toContain('http://google.com');
+      const result = urlService.getUrlList();
+      expect(result.data).toHaveLength(2);
+      expect(result.data.map((r) => r.url)).toContain('http://example.com');
+      expect(result.data.map((r) => r.url)).toContain('http://google.com');
+      expect(result.meta.totalItems).toBe(2);
+    });
+
+    it('should sort by createdAt descending by default', async () => {
+      await urlService.fetchUrls(['http://example.com']);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      await urlService.fetchUrls(['http://google.com']);
+
+      const result = urlService.getUrlList('createdAt', 'desc');
+      expect(result.data[0].url).toBe('http://google.com');
+      expect(result.data[1].url).toBe('http://example.com');
+    });
+
+    it('should sort by createdAt ascending', async () => {
+      await urlService.fetchUrls(['http://example.com']);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      await urlService.fetchUrls(['http://google.com']);
+
+      const result = urlService.getUrlList('createdAt', 'asc');
+      expect(result.data[0].url).toBe('http://example.com');
+      expect(result.data[1].url).toBe('http://google.com');
+    });
+
+    it('should paginate results correctly', async () => {
+      const urls = Array.from({ length: 15 }, (_, i) => `http://example${i}.com`);
+      await urlService.fetchUrls(urls);
+
+      const page1 = urlService.getUrlList(undefined, 'desc', { page: 1, limit: 10 });
+      expect(page1.data).toHaveLength(10);
+      expect(page1.meta.currentPage).toBe(1);
+      expect(page1.meta.totalPages).toBe(2);
+      expect(page1.meta.hasNextPage).toBe(true);
+      expect(page1.meta.hasPreviousPage).toBe(false);
+
+      const page2 = urlService.getUrlList(undefined, 'desc', { page: 2, limit: 10 });
+      expect(page2.data).toHaveLength(5);
+      expect(page2.meta.currentPage).toBe(2);
+      expect(page2.meta.hasNextPage).toBe(false);
+      expect(page2.meta.hasPreviousPage).toBe(true);
     });
   });
 

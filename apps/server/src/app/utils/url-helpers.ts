@@ -1,3 +1,5 @@
+import { uniq } from 'lodash';
+
 export const normalizeUrl = (url: string): string => {
   // Trim whitespace and convert to lowercase
   let normalized = url.trim().toLowerCase();
@@ -12,4 +14,8 @@ export const normalizeUrl = (url: string): string => {
 
 export const normalizeUrls = (urls: string[]): string[] => {
   return urls.map(normalizeUrl);
+};
+
+export const removeDuplicates = (urls: string[]): string[] => {
+  return uniq(urls);
 };

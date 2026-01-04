@@ -5,11 +5,16 @@ import { FetchUrlsDTO } from './url.dto';
 import { BadRequestError } from '../../utils/http-errors';
 import { HttpResponse, UrlServiceEvents, UrlListQueryParams } from '@org/shared';
 import { createSSEConnection } from '../../utils/sse';
+import { validatePaginationParams } from '../../utils/pagination';
 
 export const urlController = (app: FastifyInstance) => {
   app.get<{ Querystring: UrlListQueryParams }>('/list', async (req, reply) => {
-    const { sortBy, order } = req.query;
-    const data = urlService.getUrlList(sortBy, order);
+    const { sortBy, order, page, limit } = req.query;
+
+    // Validate and build pagination params (defaults to page=1, limit=10 if not provided)
+    const paginationParams = validatePaginationParams(page, limit);
+
+    const data = urlService.getUrlList(sortBy, order, paginationParams);
     const response: HttpResponse<typeof data> = {
       success: true,
       data,

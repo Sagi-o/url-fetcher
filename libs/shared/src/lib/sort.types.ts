@@ -11,4 +11,6 @@ export type UrlSortField = 'createdAt' | 'updatedAt';
 export type UrlListQueryParams = {
   sortBy?: UrlSortField;
   order?: SortOrder;
+  page?: number;
+  limit?: number;
 };

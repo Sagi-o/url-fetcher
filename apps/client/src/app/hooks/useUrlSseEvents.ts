@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { UrlRecord, HttpResponse } from '@org/shared';
+import { UrlRecord, HttpResponse, PaginatedResponse } from '@org/shared';
 import { API_URL } from '../dal/api';
 
 const parseSSEData = <T>(data: string): T => {
@@ -17,18 +17,25 @@ export const useUrlSseEvents = () => {
       const updatedUrlRecord = parseSSEData<UrlRecord>(event.data);
 
       // Update all cached url list queries (regardless of sort params)
-      queryClient.setQueriesData<HttpResponse<UrlRecord[]>>(
+      queryClient.setQueriesData<HttpResponse<PaginatedResponse<UrlRecord>>>(
         { queryKey: ['url', 'list'] },
         (oldData) => {
-          if (!oldData || !oldData.data) return oldData;
+          if (!oldData?.data?.data) return oldData;
 
-          const updatedList = oldData.data.map((url) =>
+          // Only update if the URL exists in the current page
+          const urlExists = oldData.data.data.some((url) => url.url === updatedUrlRecord.url);
+          if (!urlExists) return oldData;
+
+          const updatedList = oldData.data.data.map((url) =>
             url.url === updatedUrlRecord.url ? updatedUrlRecord : url
           );
 
           return {
             ...oldData,
-            data: updatedList,
+            data: {
+              ...oldData.data,
+              data: updatedList,
+            },
           };
         }
       );

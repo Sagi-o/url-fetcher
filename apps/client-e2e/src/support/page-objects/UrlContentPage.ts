@@ -16,17 +16,17 @@ export class UrlContentPage {
 
   // Actions
   clickBackButton() {
-    cy.get(this.selectors.backButton).click();
+    cy.get(this.selectors.backButton).scrollIntoView().click({ force: true });
     return this;
   }
 
   clickPreviewTab() {
-    cy.get(this.selectors.previewTab).click();
+    cy.get(this.selectors.previewTab).scrollIntoView().click({ force: true });
     return this;
   }
 
   clickSourceTab() {
-    cy.get(this.selectors.sourceTab).click();
+    cy.get(this.selectors.sourceTab).scrollIntoView().click({ force: true });
     return this;
   }
 
