@@ -142,12 +142,12 @@ describe('UrlService', () => {
       }).toThrow('URL not found');
     });
 
-    it('should throw error when URL is still loading', async () => {
+    it('should return URL record even when still loading', async () => {
       await urlService.fetchUrls(['http://example.com']);
 
-      expect(() => {
-        urlService.getUrlContent('http://example.com');
-      }).toThrow('URL content not available yet');
+      const record = urlService.getUrlContent('http://example.com');
+      expect(record.status).toBe('loading');
+      expect(record.url).toBe('http://example.com');
     });
   });
 });

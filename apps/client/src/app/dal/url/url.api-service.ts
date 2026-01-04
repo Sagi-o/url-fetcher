@@ -23,7 +23,7 @@ export const urlApiService = {
   },
 
   getContent: async (url: string) => {
-    const { data } = await api.get<HttpResponse<string>>(
+    const { data } = await api.get<HttpResponse<UrlRecord>>(
       `${controllerPath}/content?url=${url}`
     );
     return data;
@@ -31,7 +31,7 @@ export const urlApiService = {
 
   fetchUrls: async (urls: string[]) => {
     const { data } = await api.post<
-      HttpResponse<(UrlRecord & { status: 'loading' })[]>
+      HttpResponse<UrlRecord[]>
     >(`${controllerPath}/fetch`, { urls });
     return data;
   },

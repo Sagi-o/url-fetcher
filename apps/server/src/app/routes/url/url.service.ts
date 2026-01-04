@@ -35,15 +35,12 @@ export class UrlService extends EventEmitter {
     return paginate(urls, paginationParams);
   }
 
-  getUrlContent(url: string): string {
+  getUrlContent(url: string): UrlRecord {
     const record = urlTable.get(url);
     if (!record) {
       throw new Error('URL not found');
     }
-    if (record.status !== 'success') {
-      throw new Error('URL content not available yet');
-    }
-    return record.content;
+    return record;
   }
 
   async fetchUrls(urls: string[]): Promise<UrlRecordBase[]> {
