@@ -60,9 +60,7 @@ export class UrlService extends EventEmitter {
       this.emit(UrlServiceEvents.URL_UPDATED, loadingRecord);
     }
 
-    // Fetch all URLs in parallel using Promise.all
-    // This is more efficient than sequential fetching (for loop)
-    // Fire and forget - errors are handled in fetchUrlContent
+    // Fetch all URLs in parallel
     Promise.all(
       uniqueUrls.map((url) => {
         const record = urlTable.get(url);
