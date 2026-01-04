@@ -15,20 +15,3 @@ export function buildSortQueryString(params?: UrlListQueryParams): string {
 
   return queryParams.toString();
 }
-
-/**
- * Generic utility to build query strings from any params object
- */
-export function buildQueryString(params?: Record<string, string | number | boolean | undefined>): string {
-  if (!params) return '';
-
-  const queryParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      queryParams.append(key, String(value));
-    }
-  });
-
-  return queryParams.toString();
-}
