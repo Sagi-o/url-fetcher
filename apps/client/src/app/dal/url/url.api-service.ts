@@ -29,10 +29,10 @@ export const urlApiService = {
     return data;
   },
 
-  fetchUrls: async (urls: string[]) => {
+  fetchUrls: async (urls: string[], fetchCss?: boolean) => {
     const { data } = await api.post<
       HttpResponse<UrlRecord[]>
-    >(`${controllerPath}/fetch`, { urls });
+    >(`${controllerPath}/fetch`, { urls, fetchCss });
     return data;
   },
 };

@@ -23,7 +23,7 @@ export const UrlListPage = () => {
   const urlList = paginatedData?.data;
 
   const handleRefetch = (url: string) => {
-    refetchUrl([url]);
+    refetchUrl({ urls: [url] });
 
     queryClient.invalidateQueries({
       queryKey: ['url', 'content', url],

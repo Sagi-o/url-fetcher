@@ -1,4 +1,4 @@
-import { Button, Textarea, Stack, Card, Title, Group } from '@mantine/core';
+import { Button, Textarea, Stack, Card, Title, Group, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFetchUrls } from '../../dal/url/url.api-hooks';
@@ -26,6 +26,7 @@ export const UrlSubmissionForm = () => {
   const form = useForm({
     initialValues: {
       urlsInput: '',
+      fetchCss: false,
     },
     validate: {
       urlsInput: (value) => {
@@ -73,7 +74,7 @@ export const UrlSubmissionForm = () => {
       .map((url) => url.trim())
       .filter((url) => url.length > 0);
 
-    fetchUrls.mutate(urls, {
+    fetchUrls.mutate({ urls, fetchCss: values.fetchCss }, {
       onSuccess: () => {
         notifications.show({
           title: 'Success',
@@ -106,6 +107,12 @@ export const UrlSubmissionForm = () => {
             error={form.errors.urlsInput}
             minRows={4}
             autosize
+          />
+          <Checkbox
+            data-testid="fetch-css-checkbox"
+            label="Fetch and inline CSS (slower but preserves styling)"
+            checked={form.values.fetchCss}
+            onChange={(e) => form.setFieldValue('fetchCss', e.currentTarget.checked)}
           />
           <Group gap="sm">
             <Button variant="light" onClick={handleAddExamples} disabled={fetchUrls.isPending}>

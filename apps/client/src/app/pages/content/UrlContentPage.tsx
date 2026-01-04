@@ -19,6 +19,7 @@ import { SafeHtmlRenderer } from '../../components/SafeHtmlRenderer';
 import { BackButton } from '../../components/BackButton';
 import { IconHome, IconEye, IconCode, IconClock } from '@tabler/icons-react';
 import { formatDistanceToNow } from 'date-fns';
+import { scopeCss } from '../../utils/css-scoper';
 
 export const UrlContentPage = () => {
   const [searchParams] = useSearchParams();
@@ -154,7 +155,12 @@ export const UrlContentPage = () => {
 
               <Tabs.Panel value="preview" pt="md" data-testid="preview-panel">
                 <Card withBorder p="md" bg="white" style={{ color: 'black' }}>
-                  <SafeHtmlRenderer html={content} />
+                  {urlRecord.status === 'success' && 'css' in urlRecord && urlRecord.css && (
+                    <style>{scopeCss(urlRecord.css, '.url-preview-content')}</style>
+                  )}
+                  <div className="url-preview-content">
+                    <SafeHtmlRenderer html={content} />
+                  </div>
                 </Card>
               </Tabs.Panel>
 

@@ -21,6 +21,7 @@ export const useUrlContent = (url: string) => {
 
 export const useFetchUrls = () => {
   return useMutation({
-    mutationFn: (urls: string[]) => urlApiService.fetchUrls(urls),
+    mutationFn: ({ urls, fetchCss }: { urls: string[]; fetchCss?: boolean }) =>
+      urlApiService.fetchUrls(urls, fetchCss),
   });
 };

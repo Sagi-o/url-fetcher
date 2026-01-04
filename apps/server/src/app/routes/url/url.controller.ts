@@ -38,7 +38,7 @@ export const urlController = (app: FastifyInstance) => {
     const body = await validateDTO(FetchUrlsDTO, req.body);
 
     try {
-      const data = await urlService.fetchUrls(body.urls);
+      const data = await urlService.fetchUrls(body.urls, body.fetchCss);
       const response: HttpResponse<typeof data> = {
         success: true,
         data,

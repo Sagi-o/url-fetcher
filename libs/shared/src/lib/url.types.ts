@@ -11,6 +11,7 @@ export type UrlRecord = UrlRecordBase &
         status: 'success';
         content: string;
         fetchTime: number;
+        css?: string;
       }
     | {
         status: 'loading';

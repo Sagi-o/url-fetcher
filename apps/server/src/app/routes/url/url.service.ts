@@ -13,6 +13,7 @@ import { normalizeUrls } from '../../utils/url-helpers';
 import { sortBy as sortArray } from '../../utils/sort';
 import { paginate } from '../../utils/pagination';
 import { uniq } from 'lodash';
+import { extractAndFetchCss } from '../../utils/css-fetcher';
 
 export class UrlService extends EventEmitter {
   constructor() {
@@ -43,7 +44,7 @@ export class UrlService extends EventEmitter {
     return record;
   }
 
-  async fetchUrls(urls: string[]): Promise<UrlRecordBase[]> {
+  async fetchUrls(urls: string[], fetchCss = false): Promise<UrlRecordBase[]> {
     const uniqueUrls = uniq(normalizeUrls(urls));
     const results: UrlRecordBase[] = [];
 
@@ -72,14 +73,14 @@ export class UrlService extends EventEmitter {
       uniqueUrls.map((url) => {
         const record = urlTable.get(url);
         const createdAt = record?.createdAt ?? Date.now();
-        return this.fetchUrlContent(url, createdAt);
+        return this.fetchUrlContent(url, createdAt, fetchCss);
       })
     );
 
     return results;
   }
 
-  private async fetchUrlContent(url: string, createdAt: number): Promise<void> {
+  private async fetchUrlContent(url: string, createdAt: number, fetchCss = false): Promise<void> {
     const startTime = Date.now();
 
     try {
@@ -90,6 +91,13 @@ export class UrlService extends EventEmitter {
       }
 
       const content = await response.text();
+
+      // Optionally fetch CSS
+      let css: string | undefined;
+      if (fetchCss) {
+        css = await extractAndFetchCss(content, url);
+      }
+
       const fetchTime = Date.now() - startTime;
       const updatedAt = Date.now();
 
@@ -100,6 +108,7 @@ export class UrlService extends EventEmitter {
         createdAt,
         updatedAt,
         fetchTime,
+        ...(css && { css }),
       };
       urlTable.set(url, record);
       this.emit(UrlServiceEvents.URL_UPDATED, record);
