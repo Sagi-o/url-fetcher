@@ -15,8 +15,8 @@ This will start:
 
 ## Tech Stack
 
-**Backend:** Fastify, TypeScript, class-validator
-**Frontend:** React, TypeScript, Mantine, React Router, TanStack Query, date-fns, DOMPurify
+**Backend:** Fastify, TypeScript, class-validator, lodash
+**Frontend:** React, TypeScript, Mantine, React Router, TanStack Query, nuqs, date-fns, DOMPurify
 **Monorepo:** NX with shared types library
 
 ## Features
@@ -27,6 +27,9 @@ This will start:
 - Fetch time tracking and error messages
 - URL validation and normalization
 - XSS prevention with DOMPurify
+- Pagination (5 items per page)
+- Sorting by creation/update date (ascending/descending)
+- URL state management with query parameters (deep linking support)
 
 ## API Endpoints
 
@@ -54,27 +57,41 @@ curl -X POST -H "Content-Type: application/json" -d '{"urls": ["http://example.c
 ```
 
 ### GET /url/list
-Get all submitted URLs with their fetch status.
+Get all submitted URLs with their fetch status. Supports pagination and sorting.
+
+**Query Parameters:**
+- `page` (optional): Page number, defaults to 1
+- `limit` (optional): Items per page, defaults to 5
+- `sortBy` (optional): Sort field (`createdAt` or `updatedAt`), defaults to `updatedAt`
+- `order` (optional): Sort order (`asc` or `desc`), defaults to `desc`
 
 **Request:**
 ```bash
-curl http://localhost:3000/url/list
+curl http://localhost:3000/url/list?page=1&limit=5&sortBy=updatedAt&order=desc
 ```
 
 **Response:**
 ```json
 {
   "success": true,
-  "data": [
-    {
-      "url": "http://example.com",
-      "status": "success",
-      "content": "<html>...</html>",
-      "createdAt": 1234567890,
-      "updatedAt": 1234567891,
-      "fetchTime": 342
+  "data": {
+    "data": [
+      {
+        "url": "http://example.com",
+        "status": "success",
+        "content": "<html>...</html>",
+        "createdAt": 1234567890,
+        "updatedAt": 1234567891,
+        "fetchTime": 342
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 5,
+      "total": 10,
+      "totalPages": 2
     }
-  ]
+  }
 }
 ```
 
@@ -123,13 +140,17 @@ npm run test:client  # Frontend tests only
 
 Run E2E tests with Cypress:
 ```bash
-npm run test:e2e               # Run E2E tests
+# Start the server manually first
+npm run dev:server
+
+# Then run E2E tests in another terminal
+npm run test:e2e
 ```
 
 **Test Coverage:**
-- **Backend:** 8 tests covering URL service, fetch operations, events, and error handling
-- **Frontend:** 4 tests covering component rendering, status display, and interactions
-- **E2E:** 7 Cypress tests using Page Object pattern covering complete user flows (URL submission, navigation, content viewing)
+- **Backend:** 9 tests covering URL service, pagination, sorting, fetch operations, events, and error handling
+- **Frontend:** 3 tests covering component rendering, status display, and interactions
+- **E2E:** 11 Cypress tests using Page Object pattern covering complete user flows (URL submission, navigation, content viewing, pagination)
 
 **Test Architecture:**
 - All UI components use `data-testid` attributes for reliable element selection
@@ -140,6 +161,9 @@ npm run test:e2e               # Run E2E tests
 
 - **Type Safety:** Shared types via `@org/shared` package, discriminated unions, no `any` types
 - **Real-time Updates:** SSE for live status updates with React Query cache invalidation
+- **URL State Management:** Query parameters synced with nuqs for deep linking and shareable URLs
+- **Pagination:** Server-side pagination with reusable utilities and metadata
 - **Validation:** DTO validation with class-validator, URL normalization
 - **Security:** DOMPurify for XSS prevention, CORS configured
 - **Separation of Concerns:** Service/controller layers, component-based UI
+- **Testing:** Page Object pattern for E2E tests, all interactions use `data-testid` attributes
