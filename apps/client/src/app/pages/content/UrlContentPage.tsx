@@ -89,8 +89,8 @@ export const UrlContentPage = () => {
       >
         <Stack gap="md">
           <Group justify="space-between" align="flex-start">
-            <Text fw={500} size="sm" c="dimmed" data-testid="current-url">
-              URL: {url}
+            <Text fw={600} size="lg" data-testid="current-url">
+              {url}
             </Text>
             <Group gap="xs">
               <Badge
@@ -118,9 +118,12 @@ export const UrlContentPage = () => {
               )}
             </Group>
           </Group>
-          <Text size="xs" c="dimmed" data-testid="time-ago">
-            {timeAgo}
-          </Text>
+          <Group gap="xs">
+            <IconClock size={14} color="gray" />
+            <Text size="xs" c="dimmed" data-testid="time-ago">
+              Fetched {timeAgo}
+            </Text>
+          </Group>
           {urlRecord.status === 'failed' && 'errorMessage' in urlRecord && (
             <Text size="sm" c="red" data-testid="error-message">
               Error: {urlRecord.errorMessage}
