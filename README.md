@@ -1,4 +1,5 @@
 # URL Fetcher
+<img width="683" height="677" alt="Screenshot 2026-01-04 at 13 21 11" src="https://github.com/user-attachments/assets/84458cd6-9dc0-4438-8e1f-f1f64d58653c" />
 
 A full-stack application that fetches the content of HTTP URLs and displays the results via a web interface.
 
