@@ -4,7 +4,7 @@ import { UrlSortField, SortOrder, UrlListQueryParams } from '@org/shared';
 export function useUrlListParams() {
   const [params, setParams] = useQueryStates(
     {
-      sortBy: parseAsStringLiteral(['createdAt', 'updatedAt'] as const).withDefault('updatedAt'),
+      sortBy: parseAsStringLiteral(['createdAt', 'updatedAt'] as const).withDefault('createdAt'),
       order: parseAsStringLiteral(['asc', 'desc'] as const).withDefault('desc'),
       page: parseAsInteger.withDefault(1),
       limit: parseAsInteger.withDefault(5),
