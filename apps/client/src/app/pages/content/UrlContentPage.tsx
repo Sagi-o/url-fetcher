@@ -33,7 +33,7 @@ export const UrlContentPage = () => {
   const { data, isLoading, error } = useUrlContent(url || '');
 
   if (!url) {
-    return <EmptyState message="Please provide a URL query parameter" />;
+    return <EmptyState message="No URL provided." />;
   }
 
   if (isLoading) {
